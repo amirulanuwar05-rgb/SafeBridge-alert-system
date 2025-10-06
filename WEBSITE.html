@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SafeBridge Alert System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      background: #0077b6;
+      color: white;
+      padding: 20px;
+      margin: 0;
+    }
+    #video-box {
+      width: 80%;
+      max-width: 700px;
+      height: auto;
+      margin: 20px auto;
+      border: 3px solid #0077b6;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #video-box iframe {
+      width: 100%;
+      height: 400px;
+    }
+    #datetime {
+      font-size: 20px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th {
+      background: #0077b6;
+      color: white;
+      padding: 10px;
+    }
+    td {
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SafeBridge Alert System</h1>
+
+  <!-- 📹 Video Box -->
+  <div id="video-box">
+    <!-- Replace with your ESP32-CAM streaming link -->
+    <iframe src="http://YOUR_ESP32CAM_IP:81/stream" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <!-- ⏰ Live Date & Time -->
+  <div id="datetime"></div>
+
+  <!-- 📊 Database Table -->
+  <table id="data-table">
+    <tr>
+      <th>Location</th>
+      <th>Date</th>
+      <th>Time</th>
+    </tr>
+  </table>
+
+  <!-- ✅ Firebase Config -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyChkbY6PXtz2cZK20buIZjhnSInLTRNF10",
+      authDomain: "safebridge-alert-system.firebaseapp.com",
+      databaseURL: "https://safebridge-alert-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "safebridge-alert-system",
+      storageBucket: "safebridge-alert-system.appspot.com",
+      messagingSenderId: "391397226519",
+      appId: "1:391397226519:web:f4ed95729028e8eb7ec452"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    // 📊 Load data from Firebase (newest on top)
+    const table = document.getElementById("data-table");
+
+    firebase.database().ref("incident").on("child_added", (snapshot) => {
+      const data = snapshot.val();
+      const row = table.insertRow(1); // Insert below header row
+      row.insertCell(0).innerText = data.location || "N/A";
+      row.insertCell(1).innerText = data.date || "N/A";
+      row.insertCell(2).innerText = data.time || "N/A";
+    });
+
+    // ⏰ Live Date & Time
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById("datetime").innerText = now.toLocaleString();
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+
+</body>
+</html>
