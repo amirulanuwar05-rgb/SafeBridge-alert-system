@@ -64,19 +64,17 @@
   <iframe src="https://marlyn-eupeptic-mae.ngrok-free.dev/" frameborder="0" allowfullscreen></iframe>
 </div>
 
-
-
-
-
   <!-- ⏰ Live Date & Time -->
   <div id="datetime"></div>
 
   <!-- 📊 Database Table -->
   <table id="data-table">
     <tr>
-      <th>Location</th>
       <th>Date</th>
       <th>Time</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Status</th>
     </tr>
   </table>
 
@@ -102,9 +100,11 @@
     firebase.database().ref("incident").on("child_added", (snapshot) => {
       const data = snapshot.val();
       const row = table.insertRow(1); // Insert below header row
-      row.insertCell(0).innerText = data.location || "N/A";
-      row.insertCell(1).innerText = data.date || "N/A";
-      row.insertCell(2).innerText = data.time || "N/A";
+      row.insertCell(0).innerText = data.date || "N/A";
+      row.insertCell(1).innerText = data.time || "N/A";
+      row.insertCell(2).innerText = data.latitude || "N/A";
+      row.insertCell(3).innerText = data.longitude || "N/A";
+      row.insertCell(4).innerText = data.status || "N/A";
     });
 
     // ⏰ Live Date & Time
@@ -118,11 +118,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
