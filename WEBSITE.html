@@ -17,9 +17,9 @@
       margin: 0;
     }
     #video-box {
-      width: 40%;
-      max-width: 500px;
-      aspect-ratio: 16/9;
+      width: 40%;            
+      max-width: 500px;      
+      aspect-ratio: 16/9;    
       margin: 20px auto;
       border: 3px solid #0077b6;
       border-radius: 10px;
@@ -38,19 +38,6 @@
       margin: 15px 0;
       font-weight: bold;
     }
-
-    /* 🔎 Search Box */
-    #search-container {
-      margin: 20px auto;
-    }
-    #search-box {
-      padding: 10px;
-      width: 250px;
-      border: 2px solid #0077b6;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
     table {
       width: 80%;
       margin: 20px auto;
@@ -70,6 +57,26 @@
       padding: 10px;
       text-align: center;
     }
+
+    /* 🔎 Search Box Styling */
+    #search-container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    #search-box {
+      padding: 12px;
+      width: 280px;
+      border: 2px solid #0077b6;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #search-box:focus {
+      border-color: #023e8a;
+      box-shadow: 0 0 8px rgba(0, 119, 182, 0.5);
+    }
   </style>
 </head>
 <body>
@@ -77,16 +84,17 @@
   <h1>SafeBridge Alert System</h1>
 
   <!-- 📹 Video Box -->
-  <div id="video-box">
-    <iframe src="https://marlyn-eupeptic-mae.ngrok-free.dev/" frameborder="0" allowfullscreen></iframe>
-  </div>
+ <div id="video-box">
+  <iframe src="https://marlyn-eupeptic-mae.ngrok-free.dev/" frameborder="0" allowfullscreen></iframe>
+</div>
 
   <!-- ⏰ Live Date & Time -->
   <div id="datetime"></div>
 
   <!-- 🔎 Search Box -->
   <div id="search-container">
-    <input type="text" id="search-box" placeholder="Search by date (e.g. 08/10/2025)">
+    <label for="search-box"><b>🔎 Search Date:</b></label><br>
+    <input type="text" id="search-box" placeholder="Enter date (e.g. 08/10/2025)">
   </div>
 
   <!-- 📊 Database Table -->
@@ -116,12 +124,12 @@
 
     firebase.initializeApp(firebaseConfig);
 
+    // 📊 Load data from Firebase (newest on top)
     const table = document.getElementById("data-table");
 
-    // 📊 Load data from Firebase
     firebase.database().ref("incident").on("child_added", (snapshot) => {
       const data = snapshot.val();
-      const row = table.insertRow(1);
+      const row = table.insertRow(1); // Insert below header row
       row.insertCell(0).innerText = data.date || "N/A";
       row.insertCell(1).innerText = data.time || "N/A";
       row.insertCell(2).innerText = data.latitude || "N/A";
@@ -137,15 +145,16 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // 🔎 Search Function
+    // 🔎 Search Filter
     document.getElementById("search-box").addEventListener("keyup", function() {
       let filter = this.value.toLowerCase();
       let rows = table.getElementsByTagName("tr");
-      for (let i = 1; i < rows.length; i++) { // skip header
+
+      for (let i = 1; i < rows.length; i++) {
         let dateCell = rows[i].getElementsByTagName("td")[0];
         if (dateCell) {
-          let txtValue = dateCell.textContent || dateCell.innerText;
-          rows[i].style.display = txtValue.toLowerCase().includes(filter) ? "" : "none";
+          let textValue = dateCell.textContent || dateCell.innerText;
+          rows[i].style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
         }
       }
     });
