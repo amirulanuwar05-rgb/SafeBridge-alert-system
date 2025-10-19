@@ -4,27 +4,32 @@
   <title>SafeBridge Alert System</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', sans-serif;
       text-align: center;
-      background: #f2f2f2;
+      background: #121212;
+      color: #e0e0e0;
       margin: 0;
       padding: 0;
     }
     h1 {
-      background: #0077b6;
+      background: linear-gradient(90deg, #0077b6, #0096c7);
       color: white;
       padding: 20px;
       margin: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
+
+    /* 📹 Video Box */
     #video-box {
-      width: 40%;            
-      max-width: 500px;      
-      aspect-ratio: 16/9;    
-      margin: 20px auto;
-      border: 3px solid #0077b6;
-      border-radius: 10px;
+      width: 45%;
+      max-width: 420px;
+      aspect-ratio: 16/9;
+      margin: 25px auto;
+      border: 3px solid #00b4d8;
+      border-radius: 15px;
       overflow: hidden;
       background: black;
+      box-shadow: 0 0 20px rgba(0,180,216,0.3);
     }
     #video-box iframe {
       width: 100%;
@@ -33,29 +38,12 @@
       display: block;
     }
 
+    /* ⏰ Date and Time */
     #datetime {
       font-size: 20px;
-      margin: 15px 0;
-      font-weight: bold;
-    }
-    table {
-      width: 80%;
-      margin: 20px auto;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th {
-      background: #0077b6;
-      color: white;
-      padding: 10px;
-    }
-    td {
-      padding: 10px;
-      text-align: center;
+      margin: 10px 0;
+      font-weight: 600;
+      color: #caf0f8;
     }
 
     /* 🔎 Search Box Styling */
@@ -63,19 +51,78 @@
       margin: 20px auto;
       text-align: center;
     }
-
     #search-box {
       padding: 12px;
       width: 280px;
-      border: 2px solid #0077b6;
+      border: 2px solid #00b4d8;
       border-radius: 8px;
       font-size: 16px;
       outline: none;
+      background-color: #1c1c1c;
+      color: #e0e0e0;
+    }
+    #search-box:focus {
+      border-color: #0096c7;
+      box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
     }
 
-    #search-box:focus {
-      border-color: #023e8a;
-      box-shadow: 0 0 8px rgba(0, 119, 182, 0.5);
+    /* 📊 Table Styling */
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: #1f1f1f;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+    table, th, td {
+      border: 1px solid #333;
+    }
+    th {
+      background: #0077b6;
+      color: white;
+      padding: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    td {
+      padding: 10px;
+      text-align: center;
+      color: #eee;
+    }
+    tr:hover {
+      background-color: #2a2a2a;
+      transition: 0.3s;
+    }
+
+    /* 🟢 Status Dot */
+    #status {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    #statusDot {
+      height: 12px;
+      width: 12px;
+      background: limegreen;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    /* 🕒 Last Updated */
+    #lastUpdated {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    /* 🔄 Loading */
+    #loading {
+      text-align: center;
+      color: #bbb;
+      margin-top: 20px;
+      display: none;
     }
   </style>
 </head>
@@ -84,12 +131,18 @@
   <h1>SafeBridge Alert System</h1>
 
   <!-- 📹 Video Box -->
- <div id="video-box">
-  <iframe src="https://marlyn-eupeptic-mae.ngrok-free.dev/" frameborder="0" allowfullscreen></iframe>
-</div>
+  <div id="video-box">
+    <iframe src="https://marlyn-eupeptic-mae.ngrok-free.dev/" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <!-- 🟢 Status Indicator -->
+  <p id="status"><span id="statusDot"></span>System Online</p>
 
   <!-- ⏰ Live Date & Time -->
   <div id="datetime"></div>
+
+  <!-- 🕒 Last Updated -->
+  <p id="lastUpdated">Last updated: waiting for data...</p>
 
   <!-- 🔎 Search Box -->
   <div id="search-container">
@@ -108,6 +161,9 @@
     </tr>
   </table>
 
+  <!-- 🔄 Loading Indicator -->
+  <div id="loading"><p>Loading recent incidents...</p></div>
+
   <!-- ✅ Firebase Config -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -123,24 +179,32 @@
     };
 
     firebase.initializeApp(firebaseConfig);
-
-    // 📊 Load data from Firebase (newest on top)
     const table = document.getElementById("data-table");
+
+    // Show loading until first data received
+    document.getElementById("loading").style.display = "block";
 
     firebase.database().ref("incident").on("child_added", (snapshot) => {
       const data = snapshot.val();
-      const row = table.insertRow(1); // Insert below header row
+      const row = table.insertRow(1);
       row.insertCell(0).innerText = data.date || "N/A";
       row.insertCell(1).innerText = data.time || "N/A";
       row.insertCell(2).innerText = data.latitude || "N/A";
       row.insertCell(3).innerText = data.longitude || "N/A";
       row.insertCell(4).innerText = data.status || "N/A";
+
+      // Update last updated time
+      document.getElementById("lastUpdated").textContent =
+        "Last updated: " + new Date().toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
+
+      // Hide loading once data arrives
+      document.getElementById("loading").style.display = "none";
     });
 
     // ⏰ Live Date & Time
     function updateDateTime() {
       const now = new Date();
-      document.getElementById("datetime").innerText = now.toLocaleString();
+      document.getElementById("datetime").innerText = now.toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
     }
     setInterval(updateDateTime, 1000);
     updateDateTime();
@@ -159,6 +223,5 @@
       }
     });
   </script>
-
 </body>
 </html>
