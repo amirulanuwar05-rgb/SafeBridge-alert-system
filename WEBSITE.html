@@ -1,164 +1,270 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SafeBridge - Main Page</title>
+  <title>SafeBridge Alert System</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f9ff;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      background: #121212;
+      color: #e0e0e0;
       margin: 0;
       padding: 0;
     }
-
-    header {
-      background-color: #0077b6;
+    h1 {
+      background: linear-gradient(90deg, #0077b6, #0096c7);
       color: white;
       padding: 20px;
+      margin: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* 📹 Video Box */
+    #video-box {
+      width: 45%;
+      max-width: 420px;
+      aspect-ratio: 16/9;
+      margin: 25px auto;
+      border: 3px solid #00b4d8;
+      border-radius: 15px;
+      overflow: hidden;
+      background: black;
+      box-shadow: 0 0 20px rgba(0,180,216,0.3);
+    }
+    #video-box iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* ⏰ Date and Time */
+    #datetime {
+      font-size: 20px;
+      margin: 10px 0;
+      font-weight: 600;
+      color: #caf0f8;
+    }
+
+    /* 🔎 Search Box Styling */
+    #search-container {
+      margin: 20px auto;
       text-align: center;
-      font-size: 24px;
+    }
+    #search-box {
+      padding: 12px;
+      width: 280px;
+      border: 2px solid #00b4d8;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      background-color: #1c1c1c;
+      color: #e0e0e0;
+    }
+    #search-box:focus {
+      border-color: #0096c7;
+      box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
+    }
+
+    /* 📊 Table Styling */
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: #1f1f1f;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+    table, th, td {
+      border: 1px solid #333;
+    }
+    th {
+      background: #0077b6;
+      color: white;
+      padding: 10px;
+      text-transform: uppercase;
       letter-spacing: 1px;
     }
-
-    main {
-      padding: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      border: 1px solid #555;
-      padding: 8px;
+    td {
+      padding: 10px;
       text-align: center;
+      color: #eee;
+    }
+    tr:hover {
+      background-color: #2a2a2a;
+      transition: 0.3s;
     }
 
-    th {
-      background-color: #0077b6;
-      color: white;
+    /* 🟢 Status Dot */
+    #status {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    #statusDot {
+      height: 12px;
+      width: 12px;
+      background: limegreen;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
     }
 
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
+    /* 🕒 Last Updated */
+    #lastUpdated {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 5px;
     }
 
-    input[type="text"] {
-      width: 300px;
-      padding: 8px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #aaa;
+    /* 🔄 Loading */
+    #loading {
+      text-align: center;
+      color: #bbb;
+      margin-top: 20px;
+      display: none;
     }
 
-    button {
-      background-color: #0096c7;
+    /* 🖨️ Print Button */
+    #print-btn {
+      background: #00b4d8;
       color: white;
       border: none;
       padding: 10px 20px;
+      font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
+      margin-top: 10px;
       transition: background 0.3s;
     }
-
-    button:hover {
-      background-color: #0077b6;
+    #print-btn:hover {
+      background: #0096c7;
     }
   </style>
 </head>
 <body>
 
-  <header>SafeBridge Alert System</header>
+  <h1>SafeBridge Alert System</h1>
 
-  <main>
-    <!-- 🔍 Search box -->
-    <input type="text" id="searchBox" placeholder="Search alert data..." onkeyup="filterTable()">
+  <!-- 📹 Video Box -->
+  <div id="video-box">
+    <iframe src="https://marlyn-eupeptic-mae.ngrok-free.dev/" frameborder="0" allowfullscreen></iframe>
+  </div>
 
-    <!-- 🖨️ Print Button -->
-    <div style="text-align:center; margin-top:10px;">
-      <button onclick="printFiltered()">🖨️ Print Data</button>
-    </div>
+  <!-- 🟢 Status Indicator -->
+  <p id="status"><span id="statusDot"></span>System Online</p>
 
-    <!-- 📋 Data Table -->
-    <table id="data-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Location</th>
-          <th>Alert Type</th>
-          <th>Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td>Penang Bridge</td><td>Emergency</td><td>2025-10-15</td><td>Resolved</td></tr>
-        <tr><td>2</td><td>Penang Bridge</td><td>Attempt Detected</td><td>2025-10-16</td><td>Pending</td></tr>
-        <tr><td>3</td><td>Butterworth</td><td>Sensor Offline</td><td>2025-10-18</td><td>Investigating</td></tr>
-        <tr><td>4</td><td>Penang Bridge</td><td>Warning Triggered</td><td>2025-10-19</td><td>Resolved</td></tr>
-      </tbody>
-    </table>
-  </main>
+  <!-- ⏰ Live Date & Time -->
+  <div id="datetime"></div>
 
+  <!-- 🕒 Last Updated -->
+  <p id="lastUpdated">Last updated: waiting for data...</p>
+
+  <!-- 🔎 Search Box -->
+  <div id="search-container">
+    <label for="search-box"><b>🔎 Search Date:</b></label><br>
+    <input type="text" id="search-box" placeholder="Enter date (e.g. 08/10/2025)">
+  </div>
+
+  <!-- 🖨️ Print Button -->
+  <button id="print-btn" onclick="printTable()">🖨️ Print Data</button>
+
+  <!-- 📊 Database Table -->
+  <table id="data-table">
+    <tr>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Status</th>
+    </tr>
+  </table>
+
+  <!-- 🔄 Loading Indicator -->
+  <div id="loading"><p>Loading recent incidents...</p></div>
+
+  <!-- ✅ Firebase Config -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script>
-    // 🔍 Filter function
-    function filterTable() {
-      const filter = document.getElementById("searchBox").value.toLowerCase();
-      const table = document.getElementById("data-table");
-      const rows = table.getElementsByTagName("tr");
+    const firebaseConfig = {
+      apiKey: "AIzaSyChkbY6PXtz2cZK20buIZjhnSInLTRNF10",
+      authDomain: "safebridge-alert-system.firebaseapp.com",
+      databaseURL: "https://safebridge-alert-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "safebridge-alert-system",
+      storageBucket: "safebridge-alert-system.appspot.com",
+      messagingSenderId: "391397226519",
+      appId: "1:391397226519:web:f4ed95729028e8eb7ec452"
+    };
 
-      for (let i = 1; i < rows.length; i++) {
-        const rowText = rows[i].textContent.toLowerCase();
-        rows[i].style.display = rowText.includes(filter) ? "" : "none";
-      }
+    firebase.initializeApp(firebaseConfig);
+    const table = document.getElementById("data-table");
+
+    // Show loading until first data received
+    document.getElementById("loading").style.display = "block";
+
+    firebase.database().ref("incident").on("child_added", (snapshot) => {
+      const data = snapshot.val();
+      const row = table.insertRow(1);
+      row.insertCell(0).innerText = data.date || "N/A";
+      row.insertCell(1).innerText = data.time || "N/A";
+      row.insertCell(2).innerText = data.latitude || "N/A";
+      row.insertCell(3).innerText = data.longitude || "N/A";
+      row.insertCell(4).innerText = data.status || "N/A";
+
+      // Update last updated time
+      document.getElementById("lastUpdated").textContent =
+        "Last updated: " + new Date().toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
+
+      // Hide loading once data arrives
+      document.getElementById("loading").style.display = "none";
+    });
+
+    // ⏰ Live Date & Time
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById("datetime").innerText = now.toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
     }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
 
-    // 🖨️ Print Filtered Table
-    function printFiltered() {
-      const filter = document.getElementById("searchBox").value.toLowerCase();
-      const table = document.getElementById("data-table");
-      const rows = table.getElementsByTagName("tr");
+    // 🔎 Search Filter
+    document.getElementById("search-box").addEventListener("keyup", function() {
+      let filter = this.value.toLowerCase();
+      let rows = table.getElementsByTagName("tr");
 
-      // Create a new printable table
-      let printContent = `
-        <html>
-          <head>
-            <title>SafeBridge Alert Data</title>
-            <style>
-              body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-              th, td { border: 1px solid #555; padding: 8px; text-align: center; }
-              th { background-color: #0077b6; color: white; }
-              tr:nth-child(even) { background-color: #f2f2f2; }
-            </style>
-          </head>
-          <body>
-            <h2>SafeBridge Alert Report</h2>
-            <table>
-              ${table.tHead.outerHTML}
-              <tbody>
-      `;
-
-      // Only add visible (filtered) rows
       for (let i = 1; i < rows.length; i++) {
-        if (rows[i].style.display !== "none") {
-          printContent += rows[i].outerHTML;
+        let dateCell = rows[i].getElementsByTagName("td")[0];
+        if (dateCell) {
+          let textValue = dateCell.textContent || dateCell.innerText;
+          rows[i].style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
         }
       }
+    });
 
-      printContent += `
-              </tbody>
-            </table>
-          </body>
-        </html>
-      `;
-
+    // 🖨️ Print Function
+    function printTable() {
       const printWindow = window.open('', '', 'width=900,height=600');
-      printWindow.document.write(printContent);
+      const tableHTML = document.getElementById("data-table").outerHTML;
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>SafeBridge Alert Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+            h2 { color: #0077b6; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #555; padding: 8px; text-align: center; }
+            th { background-color: #0077b6; color: white; }
+            tr:nth-child(even) { background-color: #f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <h2>SafeBridge Alert Report</h2>
+          ${tableHTML}
+        </body>
+        </html>
+      `);
       printWindow.document.close();
       printWindow.print();
     }
