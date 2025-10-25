@@ -11,12 +11,19 @@
       margin: 0;
       padding: 0;
     }
+
+    /* 🌟 Glowing Animated Header */
     h1 {
       background: linear-gradient(90deg, #0077b6, #0096c7);
       color: white;
       padding: 20px;
       margin: 0;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 15px rgba(0, 150, 199, 0.6);
+      animation: glowPulse 2s infinite alternate;
+    }
+    @keyframes glowPulse {
+      from { box-shadow: 0 0 10px #0096c7; }
+      to { box-shadow: 0 0 25px #00b4d8; }
     }
 
     /* 📹 Video Box */
@@ -75,7 +82,7 @@
       background: #1f1f1f;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      box-shadow: 0 0 25px rgba(0, 180, 216, 0.2); /* 🪶 Slight glow shadow */
     }
     table, th, td {
       border: 1px solid #333;
@@ -92,12 +99,15 @@
       text-align: center;
       color: #eee;
     }
+
+    /* ✨ Row hover highlight */
     tr:hover {
-      background-color: #2a2a2a;
+      background-color: #0077b6;
+      color: white;
       transition: 0.3s;
     }
 
-    /* 🟢 Status Dot */
+    /* 🟢 Status Dot (Animated Blink) */
     #status {
       margin: 10px 0;
       font-size: 16px;
@@ -109,6 +119,11 @@
       border-radius: 50%;
       display: inline-block;
       margin-right: 8px;
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
     }
 
     /* 🕒 Last Updated */
@@ -140,6 +155,13 @@
     }
     #print-btn:hover {
       background: #0096c7;
+    }
+
+    /* 📱 Responsive Touch-Up */
+    @media (max-width: 768px) {
+      #video-box, table {
+        width: 95%;
+      }
     }
   </style>
 </head>
