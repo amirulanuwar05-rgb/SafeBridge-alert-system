@@ -51,17 +51,18 @@
       margin: 20px auto;
       text-align: center;
     }
-    #search-box {
+    input[type="text"] {
       padding: 12px;
-      width: 280px;
+      width: 260px;
       border: 2px solid #00b4d8;
       border-radius: 8px;
       font-size: 16px;
       outline: none;
       background-color: #1c1c1c;
       color: #e0e0e0;
+      margin: 5px;
     }
-    #search-box:focus {
+    input[type="text"]:focus {
       border-color: #0096c7;
       box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
     }
@@ -164,6 +165,9 @@
   <div id="search-container">
     <label for="search-box"><b>🔎 Search Date:</b></label><br>
     <input type="text" id="search-box" placeholder="Enter date (e.g. 08/10/2025)">
+    <br>
+    <label for="time-box"><b>🕒 Search Time:</b></label><br>
+    <input type="text" id="time-box" placeholder="Enter time (e.g. 14:32:00)">
   </div>
 
   <!-- 🖨️ Print Button -->
@@ -200,7 +204,6 @@
     firebase.initializeApp(firebaseConfig);
     const table = document.getElementById("data-table");
 
-    // Show loading until first data received
     document.getElementById("loading").style.display = "block";
 
     firebase.database().ref("incident").on("child_added", (snapshot) => {
@@ -212,11 +215,8 @@
       row.insertCell(3).innerText = data.longitude || "N/A";
       row.insertCell(4).innerText = data.status || "N/A";
 
-      // Update last updated time
       document.getElementById("lastUpdated").textContent =
         "Last updated: " + new Date().toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
-
-      // Hide loading once data arrives
       document.getElementById("loading").style.display = "none";
     });
 
@@ -228,19 +228,27 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // 🔎 Search Filter
-    document.getElementById("search-box").addEventListener("keyup", function() {
-      let filter = this.value.toLowerCase();
-      let rows = table.getElementsByTagName("tr");
+    // 🔎 Search Filter for Date & Time
+    function filterTable() {
+      const dateFilter = document.getElementById("search-box").value.toLowerCase();
+      const timeFilter = document.getElementById("time-box").value.toLowerCase();
+      const rows = table.getElementsByTagName("tr");
 
       for (let i = 1; i < rows.length; i++) {
-        let dateCell = rows[i].getElementsByTagName("td")[0];
-        if (dateCell) {
-          let textValue = dateCell.textContent || dateCell.innerText;
-          rows[i].style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
+        const dateCell = rows[i].getElementsByTagName("td")[0];
+        const timeCell = rows[i].getElementsByTagName("td")[1];
+
+        if (dateCell && timeCell) {
+          const dateText = dateCell.textContent.toLowerCase();
+          const timeText = timeCell.textContent.toLowerCase();
+          rows[i].style.display =
+            dateText.includes(dateFilter) && timeText.includes(timeFilter) ? "" : "none";
         }
       }
-    });
+    }
+
+    document.getElementById("search-box").addEventListener("keyup", filterTable);
+    document.getElementById("time-box").addEventListener("keyup", filterTable);
 
     // 🖨️ Print Function
     function printTable() {
@@ -271,4 +279,3 @@
   </script>
 </body>
 </html>
-
