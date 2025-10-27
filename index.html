@@ -163,7 +163,7 @@
         })
         .catch((error) => {
           loading.style.display = "none";
-          document.getElementById("error-message").innerText = "invalid input " + error.message;
+          document.getElementById("error-message").innerText = "Invalid input " + error.message;
         });
     }
 
@@ -194,15 +194,16 @@
       }
       auth.sendPasswordResetEmail(email)
         .then(() => {
-          alert("✅ Password reset email sent. Check your inbox.");
+          alert("✅ Please contact your admin");
         })
         .catch((error) => {
-          alert("invalid input " + error.message );
+          alert("Invalid input " + error.message );
         });
     }
   </script>
 </body>
 </html>
+
 
 
 
