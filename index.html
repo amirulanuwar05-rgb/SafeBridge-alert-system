@@ -163,7 +163,7 @@
         })
         .catch((error) => {
           loading.style.display = "none";
-          document.getElementById("error-message").innerText = "❌ " + error.message;
+          document.getElementById("error-message").innerText = "invalid input " + error.message;
         });
     }
 
@@ -197,11 +197,12 @@
           alert("✅ Password reset email sent. Check your inbox.");
         })
         .catch((error) => {
-          alert("❌ " + invalid password );
+          alert("invalid input " + error.message );
         });
     }
   </script>
 </body>
 </html>
+
 
 
