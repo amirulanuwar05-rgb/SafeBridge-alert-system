@@ -12,7 +12,6 @@
       padding: 0;
     }
 
-    /* 🌟 Glowing Animated Header */
     h1 {
       background: linear-gradient(90deg, #0077b6, #0096c7);
       color: white;
@@ -26,7 +25,6 @@
       to { box-shadow: 0 0 25px #00b4d8; }
     }
 
-    /* 📹 Video Box */
     #video-box {
       width: 45%;
       max-width: 420px;
@@ -45,7 +43,6 @@
       display: block;
     }
 
-    /* ⏰ Date and Time */
     #datetime {
       font-size: 20px;
       margin: 10px 0;
@@ -53,12 +50,11 @@
       color: #caf0f8;
     }
 
-    /* 🔎 Search Box Styling */
     #search-container {
       margin: 20px auto;
       text-align: center;
     }
-    input[type="text"] {
+    input[type="text"], input[type="date"], input[type="time"] {
       padding: 12px;
       width: 260px;
       border: 2px solid #00b4d8;
@@ -69,20 +65,21 @@
       color: #e0e0e0;
       margin: 5px;
     }
-    input[type="text"]:focus {
+    input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
       border-color: #0096c7;
       box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
     }
 
-    /* 📊 Table Styling */
+    /* 📊 White background table */
     table {
       width: 80%;
       margin: 20px auto;
       border-collapse: collapse;
-      background: #1f1f1f;
+      background: white; /* changed to white */
+      color: black;      /* changed text to black */
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 0 25px rgba(0, 180, 216, 0.2); /* 🪶 Slight glow shadow */
+      box-shadow: 0 0 25px rgba(0, 180, 216, 0.2);
     }
     table, th, td {
       border: 1px solid #333;
@@ -97,17 +94,13 @@
     td {
       padding: 10px;
       text-align: center;
-      color: #eee;
     }
-
-    /* ✨ Row hover highlight */
     tr:hover {
       background-color: #0077b6;
       color: white;
       transition: 0.3s;
     }
 
-    /* 🟢 Status Dot (Animated Blink) */
     #status {
       margin: 10px 0;
       font-size: 16px;
@@ -126,14 +119,12 @@
       50% { opacity: 0.2; }
     }
 
-    /* 🕒 Last Updated */
     #lastUpdated {
       font-size: 14px;
       color: #aaa;
       margin-top: 5px;
     }
 
-    /* 🔄 Loading */
     #loading {
       text-align: center;
       color: #bbb;
@@ -141,7 +132,6 @@
       display: none;
     }
 
-    /* 🖨️ Print Button */
     #print-btn {
       background: #00b4d8;
       color: white;
@@ -157,7 +147,6 @@
       background: #0096c7;
     }
 
-    /* 📱 Responsive Touch-Up */
     @media (max-width: 768px) {
       #video-box, table {
         width: 95%;
@@ -169,33 +158,30 @@
 
   <h1>SafeBridge Alert System</h1>
 
-  <!-- 📹 Video Box -->
   <div id="video-box">
     <iframe src="https://marlyn-eupeptic-mae.ngrok-free.dev" frameborder="0" allowfullscreen></iframe>
   </div>
 
-  <!-- 🟢 Status Indicator -->
   <p id="status"><span id="statusDot"></span>System Online</p>
 
-  <!-- ⏰ Live Date & Time -->
   <div id="datetime"></div>
 
-  <!-- 🕒 Last Updated -->
   <p id="lastUpdated">Last updated: waiting for data...</p>
 
-  <!-- 🔎 Search Box -->
+  <!-- 🔎 Search by Range -->
   <div id="search-container">
-    <label for="search-box"><b>🔎 Search Date:</b></label><br>
-    <input type="text" id="search-box" placeholder="Enter date (e.g. 08/10/2025)">
-    <br>
-    <label for="time-box"><b>🕒 Search Time:</b></label><br>
-    <input type="text" id="time-box" placeholder="Enter time (e.g. 14:32:00)">
+    <label><b>📅 From Date:</b></label><br>
+    <input type="date" id="from-date"><br>
+    <label><b>📅 To Date:</b></label><br>
+    <input type="date" id="to-date"><br>
+    <label><b>🕒 From Time:</b></label><br>
+    <input type="time" id="from-time"><br>
+    <label><b>🕒 To Time:</b></label><br>
+    <input type="time" id="to-time"><br>
   </div>
 
-  <!-- 🖨️ Print Button -->
   <button id="print-btn" onclick="printTable()">🖨️ Print Data</button>
 
-  <!-- 📊 Database Table -->
   <table id="data-table">
     <tr>
       <th>Date</th>
@@ -206,10 +192,8 @@
     </tr>
   </table>
 
-  <!-- 🔄 Loading Indicator -->
   <div id="loading"><p>Loading recent incidents...</p></div>
 
-  <!-- ✅ Firebase Config -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script>
@@ -242,7 +226,6 @@
       document.getElementById("loading").style.display = "none";
     });
 
-    // ⏰ Live Date & Time
     function updateDateTime() {
       const now = new Date();
       document.getElementById("datetime").innerText = now.toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
@@ -250,29 +233,36 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // 🔎 Search Filter for Date & Time
+    // 🔎 Filter by Date & Time Range
     function filterTable() {
-      const dateFilter = document.getElementById("search-box").value.toLowerCase();
-      const timeFilter = document.getElementById("time-box").value.toLowerCase();
+      const fromDate = document.getElementById("from-date").value;
+      const toDate = document.getElementById("to-date").value;
+      const fromTime = document.getElementById("from-time").value;
+      const toTime = document.getElementById("to-time").value;
       const rows = table.getElementsByTagName("tr");
 
       for (let i = 1; i < rows.length; i++) {
         const dateCell = rows[i].getElementsByTagName("td")[0];
         const timeCell = rows[i].getElementsByTagName("td")[1];
-
         if (dateCell && timeCell) {
-          const dateText = dateCell.textContent.toLowerCase();
-          const timeText = timeCell.textContent.toLowerCase();
-          rows[i].style.display =
-            dateText.includes(dateFilter) && timeText.includes(timeFilter) ? "" : "none";
+          const dateVal = dateCell.textContent;
+          const timeVal = timeCell.textContent;
+          let show = true;
+
+          if (fromDate && dateVal < fromDate) show = false;
+          if (toDate && dateVal > toDate) show = false;
+          if (fromTime && timeVal < fromTime) show = false;
+          if (toTime && timeVal > toTime) show = false;
+
+          rows[i].style.display = show ? "" : "none";
         }
       }
     }
 
-    document.getElementById("search-box").addEventListener("keyup", filterTable);
-    document.getElementById("time-box").addEventListener("keyup", filterTable);
+    document.querySelectorAll("#from-date, #to-date, #from-time, #to-time").forEach(input => {
+      input.addEventListener("change", filterTable);
+    });
 
-    // 🖨️ Print Function
     function printTable() {
       const printWindow = window.open('', '', 'width=900,height=600');
       const tableHTML = document.getElementById("data-table").outerHTML;
