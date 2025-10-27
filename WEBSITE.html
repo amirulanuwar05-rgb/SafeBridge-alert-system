@@ -190,6 +190,18 @@
     <br>
     <label for="time-box"><b>🕒 Search Time:</b></label><br>
     <input type="text" id="time-box" placeholder="Enter time (e.g. 14:32:00)">
+    <br><br>
+
+    <!-- 🆕 Added: Manual Date & Time Range Filter -->
+    <label><b>📅 Date Range:</b></label><br>
+    <input type="text" id="start-date" placeholder="Start Date (e.g. 08/10/2025)">
+    <input type="text" id="end-date" placeholder="End Date (e.g. 09/10/2025)">
+    <br>
+    <label><b>⏰ Time Range:</b></label><br>
+    <input type="text" id="start-time" placeholder="Start Time (e.g. 10:00:00)">
+    <input type="text" id="end-time" placeholder="End Time (e.g. 18:00:00)">
+    <br><br>
+    <button onclick="filterByRange()">🔍 Apply Range Filter</button>
   </div>
 
   <!-- 🖨️ Print Button -->
@@ -272,7 +284,32 @@
     document.getElementById("search-box").addEventListener("keyup", filterTable);
     document.getElementById("time-box").addEventListener("keyup", filterTable);
 
-    // 🖨️ Print Function
+    // 🆕 Added: Filter by Manual Date & Time Range
+    function filterByRange() {
+      const startDate = document.getElementById("start-date").value;
+      const endDate = document.getElementById("end-date").value;
+      const startTime = document.getElementById("start-time").value;
+      const endTime = document.getElementById("end-time").value;
+
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        const dateCell = rows[i].getElementsByTagName("td")[0];
+        const timeCell = rows[i].getElementsByTagName("td")[1];
+
+        if (dateCell && timeCell) {
+          const dateVal = dateCell.textContent.trim();
+          const timeVal = timeCell.textContent.trim();
+
+          const inDateRange = (!startDate || dateVal >= startDate) && (!endDate || dateVal <= endDate);
+          const inTimeRange = (!startTime || timeVal >= startTime) && (!endTime || timeVal <= endTime);
+
+          rows[i].style.display = (inDateRange && inTimeRange) ? "" : "none";
+        }
+      }
+    }
+
+    // 🖨️ Print Function (Background Color Changed)
     function printTable() {
       const printWindow = window.open('', '', 'width=900,height=600');
       const tableHTML = document.getElementById("data-table").outerHTML;
@@ -283,10 +320,10 @@
           <style>
             body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
             h2 { color: #0077b6; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #f8f9fa; }
             th, td { border: 1px solid #555; padding: 8px; text-align: center; }
             th { background-color: #0077b6; color: white; }
-            tr:nth-child(even) { background-color: #f2f2f2; }
+            tr:nth-child(even) { background-color: #e9ecef; }
           </style>
         </head>
         <body>
