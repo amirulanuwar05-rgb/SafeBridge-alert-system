@@ -189,25 +189,16 @@ tr:hover {
   <!-- 🕒 Last Updated -->
   <p id="lastUpdated">Last updated: waiting for data...</p>
 
-  <!-- 🔎 Search Box -->
-  <div id="search-container">
-    <label for="search-box"><b>🔎 Search Date:</b></label><br>
-    <input type="text" id="search-box" placeholder="Enter date (e.g. 08/10/2025)">
-    <br>
-    <label for="time-box"><b>🕒 Search Time:</b></label><br>
-    <input type="text" id="time-box" placeholder="Enter time (e.g. 14:32:00)">
-    <br><br>
-
     <!-- 🆕 Added: Manual Date & Time Range Filter -->
-    <label><b>📅 Date Range:</b></label><br>
+    <label><b>📅 Search Date:</b></label><br>
     <input type="text" id="start-date" placeholder="Start Date (e.g. 08/10/2025)">
     <input type="text" id="end-date" placeholder="End Date (e.g. 09/10/2025)">
     <br>
-    <label><b>⏰ Time Range:</b></label><br>
+    <label><b>⏰ Search Time:</b></label><br>
     <input type="text" id="start-time" placeholder="Start Time (e.g. 10:00:00)">
     <input type="text" id="end-time" placeholder="End Time (e.g. 18:00:00)">
     <br><br>
-    <button onclick="filterByRange()">🔍 Apply Range Filter</button>
+    <button onclick="filterByRange()">🔍 Search</button>
   </div>
 
   <!-- 🖨️ Print Button -->
@@ -344,5 +335,6 @@ tr:hover {
   </script>
 </body>
 </html>
+
 
 
