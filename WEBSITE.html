@@ -74,31 +74,37 @@
       box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
     }
 
-    /* 📊 Table Styling */
-    table {
-      width: 80%;
-      margin: 20px auto;
-      border-collapse: collapse;
-      background: #1f1f1f;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 25px rgba(0, 180, 216, 0.2); /* 🪶 Slight glow shadow */
-    }
-    table, th, td {
-      border: 1px solid #333;
-    }
-    th {
-      background: #0077b6;
-      color: white;
-      padding: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    td {
-      padding: 10px;
-      text-align: center;
-      color: #eee;
-    }
+/* 📊 Table Styling */
+table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background: white; /* ✅ White background */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(0, 180, 216, 0.2); /* 🪶 Slight glow shadow */
+}
+table, th, td {
+  border: 1px solid #ccc; /* Softer border for white table */
+}
+th {
+  background: #0077b6; /* Keep blue header */
+  color: white;
+  padding: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+td {
+  padding: 10px;
+  text-align: center;
+  color: black; /* ✅ Black text for readability */
+}
+tr:nth-child(even) {
+  background-color: #f2f2f2; /* ✅ Light gray for alternating rows */
+}
+tr:hover {
+  background-color: #e0f7fa; /* ✅ Subtle blue hover effect */
+}
 
     /* ✨ Row hover highlight */
     tr:hover {
@@ -338,3 +344,4 @@
   </script>
 </body>
 </html>
+
