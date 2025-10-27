@@ -194,7 +194,7 @@
       }
       auth.sendPasswordResetEmail(email)
         .then(() => {
-          alert("✅ Please contact your admin");
+          alert("✅ Your email or password is wrong.Please contact your admin");
         })
         .catch((error) => {
           alert("Invalid input " + error.message );
@@ -203,6 +203,7 @@
   </script>
 </body>
 </html>
+
 
 
 
