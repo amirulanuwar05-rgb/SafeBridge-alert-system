@@ -54,32 +54,31 @@
       margin: 20px auto;
       text-align: center;
     }
-    input[type="text"], input[type="date"], input[type="time"] {
-      padding: 12px;
-      width: 260px;
+    input[type="text"], input[type="time"] {
+      padding: 10px;
+      width: 220px;
       border: 2px solid #00b4d8;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 15px;
       outline: none;
       background-color: #1c1c1c;
       color: #e0e0e0;
       margin: 5px;
     }
-    input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
+    input[type="text"]:focus, input[type="time"]:focus {
       border-color: #0096c7;
       box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
     }
 
-    /* 📊 White background table */
     table {
       width: 80%;
       margin: 20px auto;
       border-collapse: collapse;
-      background: white; /* changed to white */
-      color: black;      /* changed text to black */
+      background: white; /* ✅ white background */
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 0 25px rgba(0, 180, 216, 0.2);
+      color: #000; /* ✅ black text */
     }
     table, th, td {
       border: 1px solid #333;
@@ -163,21 +162,22 @@
   </div>
 
   <p id="status"><span id="statusDot"></span>System Online</p>
-
   <div id="datetime"></div>
-
   <p id="lastUpdated">Last updated: waiting for data...</p>
 
-  <!-- 🔎 Search by Range -->
   <div id="search-container">
-    <label><b>📅 From Date:</b></label><br>
-    <input type="date" id="from-date"><br>
-    <label><b>📅 To Date:</b></label><br>
-    <input type="date" id="to-date"><br>
-    <label><b>🕒 From Time:</b></label><br>
-    <input type="time" id="from-time"><br>
-    <label><b>🕒 To Time:</b></label><br>
-    <input type="time" id="to-time"><br>
+    <h3>🔎 Search Incident Range</h3>
+    <label><b>From Date:</b></label><br>
+    <input type="text" id="start-date" placeholder="dd/mm/yyyy"><br>
+    <label><b>To Date:</b></label><br>
+    <input type="text" id="end-date" placeholder="dd/mm/yyyy"><br><br>
+
+    <label><b>From Time:</b></label><br>
+    <input type="time" id="start-time"><br>
+    <label><b>To Time:</b></label><br>
+    <input type="time" id="end-time"><br><br>
+
+    <button onclick="filterRange()">Filter</button>
   </div>
 
   <button id="print-btn" onclick="printTable()">🖨️ Print Data</button>
@@ -209,7 +209,6 @@
 
     firebase.initializeApp(firebaseConfig);
     const table = document.getElementById("data-table");
-
     document.getElementById("loading").style.display = "block";
 
     firebase.database().ref("incident").on("child_added", (snapshot) => {
@@ -220,7 +219,6 @@
       row.insertCell(2).innerText = data.latitude || "N/A";
       row.insertCell(3).innerText = data.longitude || "N/A";
       row.insertCell(4).innerText = data.status || "N/A";
-
       document.getElementById("lastUpdated").textContent =
         "Last updated: " + new Date().toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
       document.getElementById("loading").style.display = "none";
@@ -233,35 +231,24 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // 🔎 Filter by Date & Time Range
-    function filterTable() {
-      const fromDate = document.getElementById("from-date").value;
-      const toDate = document.getElementById("to-date").value;
-      const fromTime = document.getElementById("from-time").value;
-      const toTime = document.getElementById("to-time").value;
+    function filterRange() {
+      const startDate = document.getElementById("start-date").value;
+      const endDate = document.getElementById("end-date").value;
+      const startTime = document.getElementById("start-time").value;
+      const endTime = document.getElementById("end-time").value;
+
       const rows = table.getElementsByTagName("tr");
-
       for (let i = 1; i < rows.length; i++) {
-        const dateCell = rows[i].getElementsByTagName("td")[0];
-        const timeCell = rows[i].getElementsByTagName("td")[1];
-        if (dateCell && timeCell) {
-          const dateVal = dateCell.textContent;
-          const timeVal = timeCell.textContent;
-          let show = true;
-
-          if (fromDate && dateVal < fromDate) show = false;
-          if (toDate && dateVal > toDate) show = false;
-          if (fromTime && timeVal < fromTime) show = false;
-          if (toTime && timeVal > toTime) show = false;
-
-          rows[i].style.display = show ? "" : "none";
-        }
+        const date = rows[i].cells[0].innerText;
+        const time = rows[i].cells[1].innerText;
+        const show =
+          (!startDate || date >= startDate) &&
+          (!endDate || date <= endDate) &&
+          (!startTime || time >= startTime) &&
+          (!endTime || time <= endTime);
+        rows[i].style.display = show ? "" : "none";
       }
     }
-
-    document.querySelectorAll("#from-date, #to-date, #from-time, #to-time").forEach(input => {
-      input.addEventListener("change", filterTable);
-    });
 
     function printTable() {
       const printWindow = window.open('', '', 'width=900,height=600');
